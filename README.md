@@ -29,45 +29,45 @@ Your goal is to add a mathematical function to calculator.py without breaking yo
 
 1. **Clone the Repo**
 
-  - Open VS Code.
+    - Open VS Code.
 
-  - Press F1 -> Git: Clone.
+    - Press F1 -> Git: Clone.
 
-  - Paste the URL of this repo.
+    - Paste the URL of this repo.
 
 2. **Create Your Branch**
 
-  - Click main in the bottom-left corner.
+    - Click main in the bottom-left corner.
 
-  - Select + Create new branch.
+    - Select + Create new branch.
 
-  -  Name it: feature/yourname-operation (e.g., feature/alex-multiply).
+    -  Name it: feature/yourname-operation (e.g., feature/alex-multiply).
 
 3. **Write Code**
 
-  - Open calculator.py.
+    - Open calculator.py.
 
-  - Add your assigned function (subtract, multiply, divide, modulo).
+    - Add your assigned function (subtract, multiply, divide, modulo).
 
-  - Do not delete the existing add function!
+    - Do not delete the existing add function!
 
 4. **Save & Push**
 
-  - Go to the Source Control tab (the "Y" icon).
+    - Go to the Source Control tab (the "Y" icon).
 
-  -  Stage your changes (+).
+    -  Stage your changes (+).
 
-  - Commit with a message: "Add multiplication function".
+    - Commit with a message: "Add multiplication function".
 
-  - Click Publish Branch (Cloud icon).
+    - Click Publish Branch (Cloud icon).
 
 5. **Pull Request**
 
-  - Go to this repo on GitHub.
+    - Go to this repo on GitHub.
 
-  - Click Compare & pull request on the yellow banner.
+    - Click Compare & pull request on the yellow banner.
 
-  - Create the PR and assign your Team Lead to review it.
+    - Create the PR and assign your Team Lead to review it.
 
 ## 🆘 Troubleshooting
 
