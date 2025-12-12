@@ -1,82 +1,120 @@
-import tkinter as tk
-from tkinter import messagebox
-import calculator  # Importing the student's work
+import sys
+import calculator 
 
-def run_calculation(operation_name):
-    """
-    Helper function to safely call functions from calculator.py
-    even if they haven't been implemented yet.
-    """
-    # 1. Get Inputs
-    try:
-        val1 = float(entry_num1.get())
-        val2 = float(entry_num2.get())
-    except ValueError:
-        messagebox.showerror("Input Error", "Please enter valid numbers.")
-        return
+try:
+    import tkinter as tk
+    from tkinter import messagebox
+    GUI_AVAILABLE = True
+except ImportError:
+    GUI_AVAILABLE = False
 
-    # 2. Check if function exists in calculator.py
-    # We look for the function by name (e.g., 'add', 'subtract')
+def run_calculation_logic(operation_name, n1, n2):
+    """
+    Core logic to call functions from calculator.py safely.
+    Returns (Success: bool, Result/Message: str)
+    """
+    # Check if function exists in calculator.py
     func = getattr(calculator, operation_name, None)
 
     if func is None:
-        messagebox.showwarning("Not Implemented", f"The function '{operation_name}' is missing!\n\nGo into calculator.py and add it.")
-        return
+        return False, f"Not Implemented: The function '{operation_name}' is missing in calculator.py"
 
-    # 3. Execute and Show Result
     try:
-        result = func(val1, val2)
-        label_result.config(text=f"Result: {result}", fg="green")
+        result = func(n1, n2)
+        return True, result
     except Exception as e:
-        messagebox.showerror("Execution Error", f"Something went wrong running {operation_name}:\n{str(e)}")
+        return False, f"Execution Error: {str(e)}"
 
-# --- Tkinter Setup ---
-root = tk.Tk()
-root.title("Class Calculator Project")
-root.geometry("400x450")
-root.configure(bg="#f0f0f0")
+# --- GUI MODE ---
+def run_gui():
+    def on_click(operation_name):
+        try:
+            val1 = float(entry_num1.get())
+            val2 = float(entry_num2.get())
+        except ValueError:
+            messagebox.showerror("Input Error", "Please enter valid numbers.")
+            return
 
-# Title
-tk.Label(root, text="Python Calculator", font=("Arial", 18, "bold"), bg="#f0f0f0").pack(pady=20)
+        success, output = run_calculation_logic(operation_name, val1, val2)
+        
+        if success:
+            label_result.config(text=f"Result: {output}", fg="green")
+        else:
+            if "Not Implemented" in output:
+                messagebox.showwarning("Missing Function", output)
+            else:
+                messagebox.showerror("Error", output)
 
-# Inputs
-frame_inputs = tk.Frame(root, bg="#f0f0f0")
-frame_inputs.pack(pady=10)
+    root = tk.Tk()
+    root.title("Class Calculator Project")
+    root.geometry("400x450")
+    root.configure(bg="#f0f0f0")
 
-tk.Label(frame_inputs, text="Number 1:", bg="#f0f0f0").grid(row=0, column=0, padx=5)
-entry_num1 = tk.Entry(frame_inputs, font=("Arial", 12), width=10)
-entry_num1.grid(row=0, column=1, padx=5)
+    tk.Label(root, text="Python Calculator", font=("Arial", 18, "bold"), bg="#f0f0f0").pack(pady=20)
 
-tk.Label(frame_inputs, text="Number 2:", bg="#f0f0f0").grid(row=1, column=0, padx=5)
-entry_num2 = tk.Entry(frame_inputs, font=("Arial", 12), width=10)
-entry_num2.grid(row=1, column=1, padx=5)
+    # Inputs
+    frame_inputs = tk.Frame(root, bg="#f0f0f0")
+    frame_inputs.pack(pady=10)
 
-# Buttons Frame
-frame_buttons = tk.Frame(root, bg="#f0f0f0")
-frame_buttons.pack(pady=20)
+    tk.Label(frame_inputs, text="Number 1:", bg="#f0f0f0").grid(row=0, column=0, padx=5)
+    entry_num1 = tk.Entry(frame_inputs, font=("Arial", 12), width=10)
+    entry_num1.grid(row=0, column=1, padx=5)
 
-# Helper to create buttons
-def create_btn(text, func_name, row, col, color="#e1e1e1"):
-    btn = tk.Button(frame_buttons, text=text, font=("Arial", 12), width=10, bg=color,
-                    command=lambda: run_calculation(func_name))
-    btn.grid(row=row, column=col, padx=5, pady=5)
+    tk.Label(frame_inputs, text="Number 2:", bg="#f0f0f0").grid(row=1, column=0, padx=5)
+    entry_num2 = tk.Entry(frame_inputs, font=("Arial", 12), width=10)
+    entry_num2.grid(row=1, column=1, padx=5)
 
-# Row 1
-create_btn("Add (+)", "add", 0, 0, "#d1e7dd")       # Already works
-create_btn("Subtract (-)", "subtract", 0, 1)        # Needs Implementation
+    # Buttons
+    frame_buttons = tk.Frame(root, bg="#f0f0f0")
+    frame_buttons.pack(pady=20)
 
-# Row 2
-create_btn("Multiply (*)", "multiply", 1, 0)        # Needs Implementation
-create_btn("Divide (/)", "divide", 1, 1)            # Needs Implementation
+    def create_btn(text, func_name, row, col, color="#e1e1e1"):
+        btn = tk.Button(frame_buttons, text=text, font=("Arial", 12), width=10, bg=color,
+                        command=lambda: on_click(func_name))
+        btn.grid(row=row, column=col, padx=5, pady=5)
 
-# Row 3
-create_btn("Modulo (%)", "modulo", 2, 0)            # Needs Implementation
+    create_btn("Add (+)", "add", 0, 0, "#d1e7dd")
+    create_btn("Subtract (-)", "subtract", 0, 1)
+    create_btn("Multiply (*)", "multiply", 1, 0)
+    create_btn("Divide (/)", "divide", 1, 1)
+    create_btn("Modulo (%)", "modulo", 2, 0)
 
-# Result Label
-label_result = tk.Label(root, text="Result: ---", font=("Arial", 16, "bold"), bg="#f0f0f0", fg="#333")
-label_result.pack(pady=20)
+    label_result = tk.Label(root, text="Result: ---", font=("Arial", 16, "bold"), bg="#f0f0f0", fg="#333")
+    label_result.pack(pady=20)
+    
+    root.mainloop()
 
-# Instructions
-tk.Label(root, text="Edit calculator.py to make buttons work!", font=("Arial", 10, "italic"), bg="#f0f0f0", fg="#666").pack(side="bottom", pady=10)
+# --- CLI MODE (Fallback) ---
+def run_cli():
+    print("\n" + "="*40)
+    print("WARNING: Tkinter not found. Running in Text Mode.")
+    print("="*40)
+    print("Available operations: add, subtract, multiply, divide, modulo")
+    print("Type 'q' to quit.\n")
 
-root.mainloop()
+    while True:
+        op = input("Enter operation: ").strip().lower()
+        if op == 'q': break
+        
+        try:
+            n1 = float(input("Number 1: "))
+            n2 = float(input("Number 2: "))
+            
+            success, output = run_calculation_logic(op, n1, n2)
+            
+            if success:
+                print(f"✅ Result: {output}")
+            else:
+                print(f"❌ {output}")
+            print("-" * 20)
+            
+        except ValueError:
+            print("❌ Error: Please enter valid numbers.")
+        except KeyboardInterrupt:
+            break
+
+if __name__ == "__main__":
+    if GUI_AVAILABLE:
+        run_gui()
+    else:
+        run_cli()
